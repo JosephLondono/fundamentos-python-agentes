@@ -1,3 +1,6 @@
+## Día 1: Lista y Diccionarios 
+## Día 2: Anidaciones - [[],[],[]...], {"a": {1: []}}, [{},{}]
+
 import datetime
 print("-----------Iniciando el pseudoagente estilo consola--------------------")
 
@@ -27,63 +30,66 @@ while intentos < 3 and not tiene_acceso:
 
 ## Pseudoagente
 if tiene_acceso:
-   
     #TO-DO: Agregar una memoria al pseudo agente utilizando listas y diccionarios
-    #historial_chat=[]
+    historial_chat=[{'timestamp': '2026-03-18 13:50:51', 'cmd': 'ping', 'rol': 'invitado', 'descripcion': 'Se ha enviado un ping y de respuesta se devolvió un pong.'}, {'timestamp': '2026-03-18 13:50:56', 'cmd': 'fecha_hoy', 'rol': 'invitado', 'descripcion': '[Acceso Denegado] Este comando requiere privilegios de administrador.'}, {'timestamp': '2026-03-18 13:51:02', 'cmd': 'dormir', 'rol': 'invitado', 'descripcion': 'Comando no existe. Intente de nuevo'}, {'timestamp': '2026-03-18 13:51:07', 'cmd': 'salir', 'rol': 'invitado', 'descripcion': 'Se ha solicitado terminar la sesión.'}] 
     pseudo_activo = True
     mensaje = ""
-    while pseudo_activo:
-        #TO-DO: Activar/Desactivar memoria del agente
-        #....
-        #Ahora, cada vez que se interactúe con el pseudoagente hay que tener 
-        # en cuenta el guardado de las interacciones en historial_chat
-        cmd = input(f"\n{usuario}@PseudoAgente>: ").strip().lower() 
-        
-    if cmd == "salir":
-        print("[PseudoAgente] Apagando sistemas...")
-        sistema_activo = False
-        #mensaje
-    #TO-DO: Habilitar una opción para activar y desactivar la memoria
-    elif cmd == "ping":
-        print("pong~")
-        #mensaje
-        
-    elif cmd == "contar":
-        pal = input("Ingrese una palabra: ").strip().lower()
-        tot_letras = len(pal)
-        tot_vocales = 0
-        tot_cons = 0
-        for p in pal:
-            if p in "aeiou":
-                tot_vocales += 1
-            elif p.isalpha(): 
-                tot_cons += 1
-                
-        print(f"Palabra ingresada: {pal}")
-        print(f"Total de vocales: {tot_vocales}")
-        print(f"Total de consonantes: {tot_cons}")
-        print(f"Total de letras: {tot_letras}")
-        #mensaje
-    elif cmd == "fecha_hoy":
-        if rol_actual == "admin":
-            ahora = datetime.datetime.now()
-            print(f"[PseudoAgente] La fecha y hora actual es: {ahora.strftime('%Y-%m-%d %H:%M:%S')}")
-        else:
-            print("[Acceso Denegado] Este comando requiere privilegios de administrador.")
-        #mensaje
-    elif cmd == "validar_pass":
-        print("Validar pass")
-        #mensaje
-    elif cmd == "calculadora":
-        print("Calculadora")
-        #mensaje
-    #TO-DO: Tener en cuenta el valor de memoria activa para saber si se guarda o no.
 
-    #TO-DO: Taller de la semana - Búsqueda de memoria
-    d_logs = {"timestamp": datetime.datetime.now(),
-              "cmd": cmd,
-              "rol": rol_actual,
-              "descripcion": mensaje}
+    while pseudo_activo:
+        cmd = input(f"\n{usuario}@PseudoAgente>: ").strip().lower() 
+
+        if cmd == "salir":
+            print("[PseudoAgente] Apagando sistemas...")
+            pseudo_activo = False
+            mensaje = "Se ha solicitado terminar la sesión."
+        elif cmd == "ping":
+            print("pong~")
+            mensaje = "Se ha enviado un ping y de respuesta se devolvió un pong."            
+        elif cmd == "contar":
+            pal = input("Ingrese una palabra: ").strip().lower()
+            tot_letras = len(pal)
+            tot_vocales = 0
+            tot_cons = 0
+            for p in pal:
+                if p in "aeiou":
+                    tot_vocales += 1
+                elif p.isalpha(): 
+                    tot_cons += 1                    
+            print(f"Palabra ingresada: {pal}")
+            print(f"Total de vocales: {tot_vocales}")
+            print(f"Total de consonantes: {tot_cons}")
+            print(f"Total de letras: {tot_letras}")
+            mensaje = f"""Se solicitó el conteo de la palabra {pal}, dando como resultados:
+            Vocales: {tot_vocales}
+            Consonantes: {tot_cons}
+            Total: {tot_letras}"""
+        elif cmd == "fecha_hoy":
+            if rol_actual == "admin":
+                ahora = datetime.datetime.now()
+                mensaje = f"[PseudoAgente] La fecha y hora actual es: {ahora.strftime('%Y-%m-%d %H:%M:%S')}"
+                print(mensaje)
+                
+            else:
+                mensaje = "[Acceso Denegado] Este comando requiere privilegios de administrador."
+                print(mensaje)
+
+        elif cmd == "validar_pass":
+            print("Validar pass")
+            mensaje = ""
+        elif cmd == "calculadora":
+            print("Calculadora")
+            mensaje = ""
+        else:
+            mensaje = "Comando no existe. Intente de nuevo"
+            print(mensaje)
+        #TO-DO: Taller de la semana - Búsqueda de memoria
+        d_log = {"timestamp": datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                "cmd": cmd,
+                "rol": rol_actual,
+                "descripcion": mensaje}
+        
+        historial_chat.append(d_log)
+        print(historial_chat)
 
 else:
     print("Acceso denegado.")
