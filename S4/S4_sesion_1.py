@@ -1,8 +1,9 @@
 import datetime
 
 #Día 1: POO in a nutshell
-## Clases: Instancias de objetos
+## Clases: Instancias (Creación) de objetos
 ## Objetos: Representaciones a partir de una clase
+### clase Carro (huella) -> carro_1, carro_2 
 ## Constructor: __init__
 ## self, siempre va con el constructor, self.attribute después. Es un tema entender el propósito de self
 ### En resumen: self funciona como un indicador de sitio, para saber a donde debes ir cuando utilizas las 
@@ -12,11 +13,44 @@ import datetime
 
 #TO - DO: Construir una clase PseudoAgente
 ##Atributos de entrada: nombre
-##Atributos adicionales: bateria, historial_chat
+##Atributos adicionales: tokens, historial_chat
 ###Métodos/Funciones
 #registrar_log()
 #gestionar_historial
+
 type Historial = dict[str, str]
+
+class PseudoAgente:
+    #Constructor
+    def __init__(self, nombre: str = "Athena"):
+        self.nombre = nombre
+        self.historial_chat: list[Historial] = []
+        self.tokens = 100
+    #Función 1: Registro de logs
+    def registrar_log(self, comando: str, rol_activo: str, mensaje: str):
+        d_log: Historial = {"timestamp": datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                "cmd": comando,
+                "rol": rol_activo,
+                "descripcion": mensaje}
+        
+        self.historial_chat.append(d_log)
+
+    #Función 2: Gestión de historial subcomandos
+    def gestionar_historial(self, op: str, rol: str):
+        self.tokens -= 30
+        if op == "all":
+            mensaje = f"[PseudoAgente] Se mostró el historial actual hasta las {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} " 
+            self.registrar_log("historial all", rol, mensaje )
+            return self.historial_chat
+        if op == "clear":
+            mensaje = f"[PseudoAgente] Se borró el historial actual a las {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} " 
+            self.registrar_log("historial clear", rol, mensaje )
+            self.historial_chat.clear()
+            return self.historial_chat
+
+
+intentos = 0
+
 
 def login(user: str, passwrd: str) -> dict[str]:
     if user == "admin" and passwrd == "admin123":
@@ -32,13 +66,7 @@ def login(user: str, passwrd: str) -> dict[str]:
             "access": True,
             "descripcion": "[Sistema] Acceso concedido. Modo Invitado.",
         }
-def historial_sing(L_hist, op: str="all"):
-    if op == "all":
-        return {"result":L_hist, "mensaje": f"[PseudoAgente] Se mostró el historial actual hasta las {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} " }
 
-    if op == "clear":
-        return {"result":[], "mensaje": f"[PseudoAgente] Se borró el historial actual a las {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} " }
-intentos = 0
 rol_actual = ""
 tiene_acceso = False
 
@@ -64,25 +92,33 @@ if tiene_acceso:
     pseudo_activo = True
     mensaje = ""
 
+    mi_agente = PseudoAgente()
+    print(mi_agente)
+
     while pseudo_activo:
+        print(f"[{mi_agente.nombre}] Tokens disponibles: {mi_agente.tokens}")
+        if mi_agente.tokens <=0:
+            print(f"[{mi_agente.nombre}] Tokens insuficientes para continuar. Apagando... ")
+            break
+        
         cmd = input(f"\n{usuario}@PseudoAgente>: ").strip().lower()
 
         if cmd == "salir":
-            print("[PseudoAgente] Apagando sistemas...")
+            print(f"[{mi_agente.nombre}]  Apagando sistemas...")            
+            mi_agente.registrar_log(cmd, rol_actual, "Sesión finalizada")
             pseudo_activo = False
-            mensaje = "Se ha solicitado terminar la sesión."
+
         elif cmd == "ping":
             print("pong~")
-            mensaje = "Se ha enviado un ping y de respuesta se devolvió un pong."            
+            mi_agente.tokens -= 20            
+            mi_agente.registrar_log(cmd, rol_actual, "Se ha enviado un ping y de respuesta se devolvió un pong.")
         
         elif cmd.startswith("hist"):
             if " " in cmd:
-                sing = cmd.split(" ")[-1]
-                hist_result = historial_sing(historial_chat, sing)
-                historial_chat = hist_result["result"]
-                print(hist_result["mensaje"])
-                print(historial_chat)
-
+                sing = cmd.split(" ")[-1]                
+                resultado = mi_agente.gestionar_historial(sing, rol_actual)
+                print(resultado)
+               
             else:
                 found = []
                 word = input("Ingresa la palabra clave a buscar: ").lower()
@@ -102,13 +138,7 @@ if tiene_acceso:
             mensaje = " [PseudoAgente] Comando no existe. Intente de nuevo"
             print(mensaje)
 
-        #Uso del type Historial
-        d_log: Historial = {"timestamp": datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-                "cmd": cmd,
-                "rol": rol_actual,
-                "descripcion": mensaje}
-        
-        historial_chat.append(d_log)
+    print(mi_agente.historial_chat)    
         
 
 else:
