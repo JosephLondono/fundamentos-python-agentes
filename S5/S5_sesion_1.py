@@ -18,7 +18,7 @@ import sqlite3
 import datetime
 import os
 
-DB_PATH = "agentes.db"
+DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "agentes.db")
 
 # -----------------------------------------------------------#
 # SECCION A: Funciones del modulo (siempre disponibles)
