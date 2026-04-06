@@ -74,6 +74,48 @@ app = FastAPI(
 
 
 # ======================================================
+# CAPITULO 1: La analogia del restaurante (5 min)
+# ======================================================
+# Imagina un restaurante:
+#   - TU eres el CLIENTE (estas en la mesa, tienes hambre)
+#   - La COCINA es el SERVIDOR (tiene los ingredientes y sabe cocinar)
+#   - El MESERO es HTTP (lleva tu pedido a la cocina y trae la comida)
+#   - El MENU es la API (te dice que puedes pedir y como pedirlo)
+#
+# Cuando visitas una pagina web, tu navegador (cliente) envia una
+# PETICION HTTP al servidor. El servidor procesa la peticion y
+# retorna una RESPUESTA. Eso es todo. Asi funciona internet.
+#
+# Codigos de respuesta del mesero:
+#   200 = "Aqui esta tu plato" (todo bien)
+#   404 = "Ese plato no existe" (recurso no encontrado)
+#   422 = "No entendi tu pedido" (datos invalidos)
+#   500 = "Se incendio la cocina" (error del servidor)
+# ======================================================
+
+
+# ======================================================
+# CAPITULO 2: Instalacion y verificacion (5 min)
+# ======================================================
+# FastAPI necesita dos paquetes adicionales:
+#   pip install fastapi uvicorn
+#
+# - fastapi: el framework que convierte funciones en endpoints
+# - uvicorn: el servidor web que ejecuta nuestra aplicacion
+#
+# Para ejecutar el servidor:
+#   cd S5
+#   uvicorn S5_sesion_2:app --reload
+#
+# El flag --reload hace que el servidor se reinicie automaticamente
+# cada vez que guardas cambios en el archivo. Muy util para desarrollo.
+#
+# PRUEBA: Ejecuta en tu terminal: pip install fastapi uvicorn
+#         Luego verifica: python -c "import fastapi; print(fastapi.__version__)"
+# ======================================================
+
+
+# ======================================================
 # CAPITULO 3: Mi primer endpoint (10 min)
 # ======================================================
 # Un ENDPOINT es una URL que responde a peticiones HTTP.
