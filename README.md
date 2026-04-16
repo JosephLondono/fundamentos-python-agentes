@@ -19,25 +19,27 @@ informacion de paises del mundo para enriquecer el briefing de cada operativo.
 
 ## Como instalar y ejecutar
 
+Los archivos del reto estan dentro de la carpeta `Reto/`. Todos los comandos se ejecutan desde ahi.
+
 ### 1. Crear entorno virtual e instalar dependencias
 
 ```bash
 python -m venv venv
 
 # Windows
-venv\Scripts\pip install -r requirements.txt
+venv\Scripts\pip install -r Reto\requirements.txt
 
 # Mac / Linux
-venv/bin/pip install -r requirements.txt
+venv/bin/pip install -r Reto/requirements.txt
 ```
 
 ### 2. Configurar variables de entorno
 
 ```bash
-# Copia el archivo de ejemplo
-cp .env.example .env
+# Copia el archivo de ejemplo dentro de Reto/
+cp Reto\.env.example Reto\.env
 
-# Abre .env y llena los valores reales:
+# Abre Reto/.env y llena los valores reales:
 # AGENCIA_API_KEY=tu_clave_secreta
 # EXTERNAL_API_URL=https://restcountries.com/v3.1
 # DB_PATH=agentes.db
@@ -47,20 +49,20 @@ cp .env.example .env
 
 ```bash
 # Windows
-venv\Scripts\python seed.py
+venv\Scripts\python Reto\seed.py
 
 # Mac / Linux
-venv/bin/python seed.py
+venv/bin/python Reto/seed.py
 ```
 
 ### 4. Levantar el servidor
 
 ```bash
 # Windows
-venv\Scripts\uvicorn main:app --reload
+venv\Scripts\uvicorn main:app --reload --app-dir Reto
 
 # Mac / Linux
-venv/bin/uvicorn main:app --reload
+venv/bin/uvicorn main:app --reload --app-dir Reto
 ```
 
 El servidor queda disponible en: http://localhost:8000  
@@ -70,10 +72,10 @@ Documentacion interactiva (Swagger UI): http://localhost:8000/docs
 
 ```bash
 # Windows
-venv\Scripts\python cliente.py
+venv\Scripts\python Reto\cliente.py
 
 # Mac / Linux
-venv/bin/python cliente.py
+venv/bin/python Reto/cliente.py
 ```
 
 ---
@@ -92,7 +94,7 @@ venv/bin/python cliente.py
 | GET    | `/misiones/{id}`              | No        | Devuelve los detalles de una mision por ID                    |
 | GET    | `/agente/{nombre}/misiones`   | No        | Lista todas las misiones de un agente                         |
 | POST   | `/misiones/{id}/completar`    | Si        | Completa una mision y descuenta energia al agente             |
-| GET    | `/briefing/{nombre}`          | No        | Datos del agente + info de pais de operaciones (API externa)  |
+| GET    | `/briefing/{nombre}`          | No        | Datos del agente + info de pais de operaciones (API externa). Params opcionales: `?pais=Colombia` o `?capital=Bogota` |
 
 Los endpoints **protegidos** requieren el header `X-API-KEY` con la clave configurada en `.env`.
 Sin el header o con clave incorrecta responden `401 Unauthorized`.
@@ -115,13 +117,15 @@ Ademas de las columnas minimas del enunciado, agregue dos columnas extra:
 
 ### 2. API publica elegida: Rest Countries (restcountries.com)
 
-Elegí la API de paises porque encaja perfectamente con la narrativa de agentes que operan
-en el mundo real. El endpoint `GET /briefing/{nombre}` consulta paises de la region Americas
-y asigna uno aleatoriamente como "zona de operaciones" del agente: capital, region, poblacion
-y bandera. Esto hace al briefing mucho mas inmersivo que un perfil plano, y la API es publica,
-gratuita y sin autenticacion (perfecta para este ejercicio).
+Elegi la API de paises porque encaja perfectamente con la narrativa de agentes que operan
+en el mundo real. El endpoint `GET /briefing/{nombre}` tiene tres modos de uso:
 
-Endpoint usado: `/v3.1/region/americas?fields=name,capital,flags,region,population`
+- `GET /briefing/Atlas` — elige un pais de la region Americas al azar
+- `GET /briefing/Atlas?pais=Colombia` — busca ese pais especifico
+- `GET /briefing/Atlas?capital=Lima` — busca el pais por su capital
+
+En cualquier caso devuelve: nombre del pais, capital, region, poblacion y URL de la bandera.
+La API es publica, gratuita y sin autenticacion (perfecta para este ejercicio).
 
 ### 3. Estrategia de resiliencia ante falla de API externa
 
